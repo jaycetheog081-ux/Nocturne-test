@@ -1,0 +1,24 @@
+NOCTURNE 0.5 — SOURCE INVENTORY
+
+Base project:
+- NOCTURNE 0.4 SwiftUI app, Xcode project, shared scheme, and GitHub Actions workflow.
+
+Research records:
+- CVE-2026-112477-NOTES.md — IOSurfaceRoot source dossier.
+- ANE-RESEARCH-NOTES.md — updated against the actual supplied ANE ZIP.
+- CVE-2026-112705-AVE.md — AppleAVE2 source dossier.
+- KERNELCACHE-IDENTIFICATION.md — kernel image metadata and SHA-256.
+- SOURCE-HASHES.txt — hashes of user-supplied research archives and kernel image.
+
+Original source archive hashes:
+AVETemporalPoC-CVE-2026-112705-main.zip  f7ef52c8cc5426c2c12ceaff0e5841d47070fa2362140d6d6359f2988e534fe7
+ane_ane_ane.zip  fd73549f09b09f3157a957dbd1b2f721260f34d6d3969916f06e400fd42900bc
+kernelcache.decompressed.bin  742714192f267bf7fbfe3de8c5437b534d7f305bf87c8b77c4d1ad9dd7446385
+
+Excluded from app integration:
+- AVE trigger source and raw panic logs.
+- ANE overflow / exploitation source.
+- The raw 64 MiB Apple kernel binary.
+
+Reason:
+These are not required for a documentation dashboard. Trigger/exploitation routines are not integrated or executed, and the kernel binary is recorded by metadata/hash rather than copied into the app.
