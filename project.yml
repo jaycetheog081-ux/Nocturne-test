@@ -1,0 +1,51 @@
+
+name: Nocturne
+
+options:
+  bundleIdPrefix: com.nocturne
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    CODE_SIGNING_ALLOWED: NO
+    CODE_SIGNING_REQUIRED: NO
+    ENABLE_BITCODE: NO
+
+targets:
+  Nocturne:
+    type: application
+    platform: iOS
+
+    sources:
+      - path: .
+        excludes:
+          - .github/**
+          - .git/**
+          - build/**
+          - DerivedData/**
+          - "*.md"
+          - "*.yml"
+          - "*.yaml"
+          - "*.zip"
+          - "*.xcassets/**
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.nocturne.app
+        PRODUCT_NAME: Nocturne
+        INFOPLIST_KEY_CFBundleDisplayName: Nocturne
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_EMIT_LOC_STRINGS: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+    scheme:
+      testTargets: []
+      gatherCoverageData: false
