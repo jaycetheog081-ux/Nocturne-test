@@ -1,0 +1,90 @@
+
+name: Build NOCTURNE unsigned IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "**.swift"
+      - "project.yml"
+      - ".github/workflows/build.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Nocturne
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          xcodebuild -version
+          xcodebuild -showsdks
+
+      - name: Install XcodeGen
+        run: |
+          brew install xcodegen
+
+      - name: Generate Xcode project
+        run: |
+          xcodegen generate --spec project.yml
+
+      - name: Verify project and scheme
+        run: |
+          xcodebuild -list -project Nocturne.xcodeproj
+          test -f Nocturne.xcodeproj/project.pbxproj
+
+      - name: Build unsigned application
+        run: |
+          set -o pipefail
+
+          xcodebuild \
+            -project Nocturne.xcodeproj \
+            -scheme Nocturne \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build 2>&1 | tee "$RUNNER_TEMP/build.log"
+
+      - name: Package IPA
+        run: |
+          set -e
+
+          APP="$RUNNER_TEMP/DerivedData/Build/Products/Release-iphoneos/Nocturne.app"
+
+          test -d "$APP"
+
+          mkdir -p Payload
+          cp -R "$APP" Payload/Nocturne.app
+
+          zip -r Nocturne-unsigned.ipa Payload
+
+          unzip -t Nocturne-unsigned.ipa
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nocturne-unsigned-ipa
+          path: Nocturne-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nocturne-build-diagnostics
+          path: |
+            ${{ runner.temp }}/build.log
+            ${{ runner.temp }}/DerivedData/Logs/Build/**
+          if-no-files-found: ignore
+          retention-days: 7
